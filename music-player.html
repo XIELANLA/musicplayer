@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>music-palyer</title>
+    <link href="./iconfont/iconfont.css" rel="stylesheet">
+    <style>
+        * {
+            list-style: none;
+        }
+
+        .media {
+            width: 800px;
+            height: 50px;
+            border: 3px solid #bbb;
+            margin: 300px auto;
+        }
+
+        .media>div {
+            float: left;
+            line-height: 50px;
+            margin: 0 10px;
+        }
+
+        .media>div.playRange {
+            width: 200px;
+            height: 6px;
+            background-color: #333;
+            margin: 22px 10px;
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .media>div.playRange .currentRange {
+            width: 0px;
+            height: 6px;
+            background-color: rgb(9, 143, 153);
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .media>div.playRange .playBtn {
+            width: 20px;
+            height: 20px;
+            background-color: rgb(9, 143, 153);
+            border-radius: 50%;
+            position: absolute;
+            left: 0px;
+            top: -7px;
+            pointer-events: none;
+        }
+
+        .media .volume {
+            position: relative;
+        }
+
+        .media .volumeRange {
+            width: 4px;
+            height: 100px;
+            background-color: #333;
+            border-radius: 2px;
+            position: absolute;
+            top: -100px;
+            left: 10px;
+            display: none;
+        }
+
+        .media .volumeRange .currentVolume {
+            width: 4px;
+            height: 50px;
+            background-color: blue;
+            border-radius: 2px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .media .volumeRange .volumeBtn {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: blue;
+            position: absolute;
+            left: -5px;
+            bottom: 40px;
+            pointer-events: none;
+        }
+
+        .media i {
+            font-size: 24px;
+        }
+
+        .media .words>ul>li {
+            height: 20px;
+            box-sizing: border-box;
+            line-height: 20px;
+            color: blueviolet;
+        }
+
+        
+    </style>
+</head>
+
+<body>
+    <audio src="./陈奕迅-孤勇者.mp3"></audio>
+    <div class="media">
+        <div class="playOrPause">
+            <i class="iconfont icon-play"></i>
+        </div>
+        <div class="time">
+            <span class="currentMinute">00</span>
+            :
+            <span class="currentSecond">00</span>
+            /
+            <span class="durationMinute">00</span>
+            :
+            <span class="durationSecond">00</span>
+        </div>
+        <div class="playRange">
+            <div class="currentRange"></div>
+            <div class="playBtn"></div>
+        </div>
+        <div class="volume">
+            <div class="volumeRange">
+                <div class="currentVolume"></div>
+                <div class="volumeBtn"></div>
+            </div>
+            <i class="iconfont icon-sound-on"></i>
+        </div>
+        <div class="words">
+            <ul>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="./jquery.js"></script>
+<script>
+    let lrc = `
+      [id:$00000000]
+      [ar:陈奕迅]
+      [ti:孤勇者]
+      [by:p_pttzhang]
+      [00:00.00]孤勇者 - 陈奕迅
+      [00:07.43]词：唐恬
+      [00:08.22]曲：钱雷
+      [00:08.84]编曲：钱雷
+      [00:09.55]吉他：高飞
+      [00:10.35]人声录音师：利伟明
+      [00:11.57]人声录音棚：雅旺录音室
+      [00:12.83]Vocal edite：汝文博@SBMS Beijing
+      [00:13.07]混音/母带：周天澈@Studio 21A
+      [00:16.67]录音作品及MV版权：EAS MUSIC LTD
+      [00:18.32]联合出品监制：霍锦卢泓宇
+      [00:19.43]制作人：钱雷
+      [00:22.16]都是勇敢的
+      [00:28.41]你额头的伤口你的不同你犯的错
+      [00:36.96]都不必隐藏
+      [00:43.41]你破旧的玩偶你的面具你的自我
+      [00:51.57]他们说要带着光驯服每一头怪兽
+      [00:58.74]他们说要缝好你的伤没有人爱小丑
+      [01:05.76]为何孤独不可光荣
+      [01:09.11]人只有不完美值得歌颂
+      [01:13.35]谁说污泥满身的不算英雄
+      [01:20.84]爱你孤身走暗巷
+      [01:22.62]爱你不跪的模样
+      [01:24.49]爱你对峙过绝望
+      [01:26.33]不肯哭一场
+      [01:28.23]爱你破烂的衣裳
+      [01:29.99]却敢堵命运的枪
+      [01:31.86]爱你和我那么像
+      [01:33.76]缺口都一样
+      [01:35.64]去吗 配吗 这褴褛的披风
+      [01:39.39]战吗 战啊 以最卑微的梦
+      [01:43.00]致那黑夜中的呜咽与怒吼
+      [01:50.24]谁说站在光里的才算英雄
+      [02:08.59]他们说要戒了你的狂
+      [02:11.57]就像擦掉了污垢
+      [02:16.15]他们说要顺台阶而上而代价是低头
+      [02:23.45]那就让我不可乘风
+      [02:26.52]你一样骄傲着那种孤勇
+      [02:30.90]谁说对弈平凡的不算英雄
+      [02:38.37]爱你孤身走暗巷
+      [02:40.17]爱你不跪的模样
+      [02:41.99]爱你对峙过绝望
+      [02:43.93]不肯哭一场
+      [02:45.75]爱你破烂的衣裳
+      [02:47.56]却敢堵命运的枪
+      [02:49.39]爱你和我那么像
+      [02:51.33]缺口都一样
+      [02:53.24]去吗 配吗 这褴褛的披风
+      [02:56.83]战吗 战啊 以最卑微的梦
+      [03:00.50]致那黑夜中的呜咽与怒吼
+      [03:07.84]谁说站在光里的才算英雄
+      [03:12.73]你的斑驳与众不同
+      [03:19.88]你的沉默震耳欲聋
+      [03:25.76]You Are The Hero
+      [03:26.55]爱你孤身走暗巷
+      [03:28.16]爱你不跪的模样
+      [03:29.95]爱你对峙过绝望
+      [03:31.83]不肯哭一场 (You Are The Hero)
+      [03:33.90]爱你来自于蛮荒
+      [03:35.48]一生不借谁的光
+      [03:37.32]你将造你的城邦
+      [03:39.22]在废墟之上
+      [03:41.17]去吗 去啊 以最卑微的梦
+      [03:44.78]战吗 战啊 以最孤高的梦
+      [03:48.46]致那黑夜中的呜咽与怒吼
+      [03:55.82]谁说站在光里的才算英雄  
+    `
+</script>
+<script>
+    //播放按钮与暂停按钮切换
+    $('.playOrPause').click(function () {
+        if ($(this).find('i').hasClass('icon-play')) {
+            $('audio')[0].play();
+            $(this).find('i').removeClass('icon-play').addClass('icon-pause');
+        } else {
+            $('audio')[0].pause();
+            $(this).find('i').removeClass('icon-pause').addClass('icon-play');
+        }
+    })
+
+    //总时长
+    $('audio')[0].oncanplay = function () {
+        let durMin = parseInt($('audio')[0].duration / 60);
+        let durSec = parseInt($('audio')[0].duration % 60);
+        $('.durationMinute').text(durMin > 10 ? durMin : '0' + durMin);
+        $('.durationSecond').text(durSec > 10 ? durSec : '0' + durSec);
+    }
+
+
+      //获取歌词
+      let lrcArr=[];
+        let timeArr=[];
+
+        let reg=/\[(\d{2}:\d{2})\.\d{2}\](.*)/;
+
+        lrc.split('\n').forEach(item=>{
+            let res=reg.exec(item);
+             if(!res) return;
+             timeArr.push(res[1])
+             lrcArr.push(res[2])
+        })
+      
+        
+    console.log(lrcArr);
+    console.log(timeArr)
+    
+        
+
+
+    //当前播放时间设置
+    $('audio')[0].ontimeupdate = function () {
+        let durMin = parseInt(this.currentTime / 60);
+        let durSec = parseInt(this.currentTime % 60);
+        $('.currentMinute').text(durMin > 10 ? durMin : '0' + durMin);
+        $('.currentSecond').text(durSec > 10 ? durSec : '0' + durSec);
+   
+    //滚动歌词
+
+        let time=`${$('.currentMinute').text()}:${$('.currentSecond').text()}`;
+        //console.log(time)
+        let index=timeArr.findIndex(item=> item===time);
+        if(index===-1) return;
+        // console.log(index);
+        $('.words>ul>li').text(lrcArr[index]);
+
+   
+    }
+
+    
+    //点击进度条
+    $('.playRange').mousedown(function (e) {
+        e.preventDefault();
+        let x = e.offsetX;
+        $('.currentRange').css('width', x);
+        $('.playBtn').css('left', x - $('.playBtn').width() / 2);
+
+        $('audio')[0].play();
+        $('.playOrPause i').removeClass('icon-play').addClass('icon-pause');
+
+        //修改当前时间
+        let percent = x / $(this).width();
+        let currTime = parseInt($('audio')[0].duration * percent);
+        $('audio')[0].currentTime = currTime;
+
+        //拖拽进度条
+        $('.playRange')[0].onmousemove = function (e) {
+
+            let x = e.offsetX;
+            $('.currentRange').css('width', x);
+            $('.playBtn').css('left', x - $('.playBtn').width() / 2);
+
+            //修改当前时间
+            let persent = x / $(this).width();
+            let currTime = parseInt($('audio')[0].duration * percent);
+            $('audio')[0].currentTime = currTime;
+        }
+
+    })
+    $(document).mouseup(function () {
+        $('.playRange')[0].onmousemove = null;
+    })
+
+
+    //显示音量
+    $('.volume').hover(function () {
+        $(this).find('.volumeRange').show();
+    }, function () {
+        $(this).find('.volumeRange').hide();
+    })
+
+    //静音切换
+    $('.volume i').click(function () {
+        if ($(this).hasClass('icon-sound-on')) {
+            $('audio')[0].muted = true;
+            $('.currentVolume').css('height', 0);
+            $('.volumeBtn').css('bottom', -7);
+            $(this).removeClass('icon-sound-on').addClass('icon-sound-off');
+        } else {
+            $('audio')[0].muted = false;
+            $('.currentVolume').css('height', 50);
+            $('.volumeBtn').css('bottom', 43);
+            $(this).removeClass('icon-sound-off').addClass('icon-sound-on');
+        }
+    })
+
+    //音量点击
+    $('.volumeRange').mousedown(function (e) {
+        e.preventDefault();
+        let y = e.offsetY;
+        $('.currentVolume').css('height', $('.volumeRange').height() - y);
+        $('.volumeBtn').css('bottom', $('.currentVolume').height() - $('.volumeBtn').height() / 2);
+        console.log(100 - y)
+        let percent = $('.currentVolume').height() / $('.volumeRange').height();
+        $('audio')[0].volume = percent;
+        //音量拖拽
+        $('.volumeRange')[0].onmousemove = function (e) {
+            let y = e.offsetY;
+            $('.currentVolume').css('height', $('.volumeRange').height() - y);
+            $('.volumeBtn').css('bottom', $('.currentVolume').height() - $('.volumeBtn').height() / 2);
+            console.log(100 - y)
+            let percent = $('.currentVolume').height() / $('.volumeRange').height();
+            $('audio')[0].volume = percent;
+        }
+    })
+    $(document).mouseup(function () {
+        $('.volumeRange')[0].onmousemove = null;
+    })
+
+    //歌词滚动
+</script>
