@@ -30,6 +30,7 @@
             margin: 22px 10px;
             border-radius: 3px;
             position: relative;
+            
             cursor: pointer;
         }
 
@@ -48,13 +49,15 @@
             background-color: rgb(9, 143, 153);
             border-radius: 50%;
             position: absolute;
-            left: 0px;
+            left: -10px;
             top: -7px;
             pointer-events: none;
         }
 
         .media .volume {
             position: relative;
+            padding-right: 5px;
+            cursor: pointer;
         }
 
         .media .volumeRange {
@@ -66,6 +69,7 @@
             top: -100px;
             left: 10px;
             display: none;
+           
         }
 
         .media .volumeRange .currentVolume {
@@ -76,6 +80,7 @@
             position: absolute;
             left: 0;
             bottom: 0;
+           
             pointer-events: none;
         }
 
@@ -87,6 +92,7 @@
             position: absolute;
             left: -5px;
             bottom: 40px;
+            
             pointer-events: none;
         }
 
@@ -262,6 +268,12 @@
         let durSec = parseInt(this.currentTime % 60);
         $('.currentMinute').text(durMin > 10 ? durMin : '0' + durMin);
         $('.currentSecond').text(durSec > 10 ? durSec : '0' + durSec);
+
+        let percent=this.currentTime/$('audio')[0].duration;
+        $('.currentRange').width(percent*$('.playRange').width());
+        console.log(percent*$('.playRange').width())
+        $('.playBtn').css('left',percent*$('.playRange').width()-$('.playBtn').width()/2);
+
    
     //滚动歌词
 
@@ -338,15 +350,19 @@
         let y = e.offsetY;
         $('.currentVolume').css('height', $('.volumeRange').height() - y);
         $('.volumeBtn').css('bottom', $('.currentVolume').height() - $('.volumeBtn').height() / 2);
-        console.log(100 - y)
+        
         let percent = $('.currentVolume').height() / $('.volumeRange').height();
         $('audio')[0].volume = percent;
+        if(percent<=0.03)
+        $('.volume i').removeClass('icon-sound-on').addClass('icon-sound-off')
+        else $('.volume i').removeClass('icon-sound-off').addClass('icon-sound-on')
+
         //音量拖拽
         $('.volumeRange')[0].onmousemove = function (e) {
             let y = e.offsetY;
             $('.currentVolume').css('height', $('.volumeRange').height() - y);
             $('.volumeBtn').css('bottom', $('.currentVolume').height() - $('.volumeBtn').height() / 2);
-            console.log(100 - y)
+            
             let percent = $('.currentVolume').height() / $('.volumeRange').height();
             $('audio')[0].volume = percent;
         }
